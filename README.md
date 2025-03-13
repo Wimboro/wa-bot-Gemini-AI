@@ -16,6 +16,6 @@ A WhatsApp bot for E-meterai customer service, built with Node.js and the `whats
    ```bash
    git clone https://github.com/wimboro/wa-bot-Gemini-AI.git
    cd wa-bot-Gemini-AI
-2. npm install
+   npm install
 3. Copy .env.example and rename .env
 4. Change GEMINI_API_KEY=your_api_key_here with your Gemini API
