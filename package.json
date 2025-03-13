@@ -1,0 +1,25 @@
+{
+  "name": "wa-bot-gemini-ai",
+  "version": "1.0.0",
+  "description": "Bot WA AI",
+  "keywords": [
+    "WhatsApp",
+    "AI",
+    "bot"
+  ],
+  "homepage": "https://github.com/wimboro/wa-bot-Gemini-AI#readme",
+  "bugs": {
+    "url": "https://github.com/wimboro/wa-bot-Gemini-AI/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wimboro/wa-bot-Gemini-AI.git"
+  },
+  "license": "ISC",
+  "author": "wimboro",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
