@@ -1,7 +1,12 @@
+// index.js
+
 require('dotenv').config();
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const JSON5 = require('json5');
+const fs = require('fs');
+const prompts = require('./prompt.json');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
@@ -12,6 +17,9 @@ const client = new Client({
 });
 
 const userStates = {};
+
+// Read and parse the JSON5 file
+const replies = JSON5.parse(fs.readFileSync('./replies.json5', 'utf8'));
 
 client.on('qr', qr => qrcode.generate(qr, { small: true }));
 client.on('ready', () => console.log('Client ready!'));
@@ -26,13 +34,13 @@ client.on('message', async message => {
 
   if (text === 'stop') {
     userStates[userId].active = false;
-    await client.sendMessage(message.from, 'Bot stopped. Type "lanjut" to continue.');
+    await client.sendMessage(message.from, replies.stopMessage);
     return;
   }
 
   if (text === 'lanjut') {
     userStates[userId].active = true;
-    await client.sendMessage(message.from, 'Bot continued. How can I help?');
+    await client.sendMessage(message.from, replies.continueMessage);
     return;
   }
 
@@ -42,31 +50,27 @@ client.on('message', async message => {
     const imageUrl = 'https://example.com/e-meterai-product.jpg';
     const media = await MessageMedia.fromUrl(imageUrl);
     await client.sendMessage(message.from, media, { 
-      caption: `Ini Caption untuk gambar.`
+      caption: replies.greetingsCaption
     });
   } else if (['pembayaran', 'bayar'].some(pay => text.includes(pay))) {
     const paymentImageUrl = 'https://example.com/payment-qr-code.jpg';
     const paymentMedia = await MessageMedia.fromUrl(paymentImageUrl);
     await client.sendMessage(message.from, paymentMedia, { 
-      caption: 'Payment methods. Scan QR code to pay.'
+      caption: replies.paymentCaption
     });
   } else if (!isNaN(text) && text >= 1 && text <= 6) {
     const option = parseInt(text);
     let response;
 
-    switch (option) {
-      case 1: response = 'E-meterai: electronic stamp for official docs.'; break;
-      case 2: response = 'Buy E-meterai via our site or customer service.'; break;
-      case 3: response = 'E-meterai price varies. Contact us for latest.'; break;
-      case 4: response = 'E-meterai delivery: 2-3 business days.'; break;
-      case 5: response = '30-day money-back guarantee if unsatisfied.'; break;
-      case 6:
-        const paymentImageUrl = 'https://example.com/payment-qr-code.jpg';
-        const paymentMedia = await MessageMedia.fromUrl(paymentImageUrl);
-        await client.sendMessage(message.from, paymentMedia, { 
-          caption: 'Payment methods. Scan QR code to pay.'
-        });
-        return;
+    if (option === 6) {
+      const paymentImageUrl = 'https://example.com/payment-qr-code.jpg';
+      const paymentMedia = await MessageMedia.fromUrl(paymentImageUrl);
+      await client.sendMessage(message.from, paymentMedia, { 
+        caption: replies.paymentCaption
+      });
+      return;
+    } else {
+      response = replies.optionResponses[option];
     }
 
     await client.sendMessage(message.from, response);
@@ -81,20 +85,21 @@ client.on('message', async message => {
       if (faqResponse) {
         await client.sendMessage(message.from, faqResponse);
       } else {
-        await client.sendMessage(message.from, 'Sorry, I don\'t understand. Try again or contact customer service.');
+        await client.sendMessage(message.from, replies.defaultMessage);
       }
     }
   }
 
   if (userStates[userId].active) {
-    await client.sendMessage(message.from, 'Continue with bot? Type "stop" to stop or "lanjut" to continue.');
+    await client.sendMessage(message.from, replies.continuePrompt);
   }
 });
 
 async function getGeminiResponse(prompt) {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash"});
-    const result = await model.generateContent(`Masukkan input untuk perintah bot ${prompt}`);
+    const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+    const fullPrompt = `${prompts.introduction}\n\nKey points:\n\n${prompts.keyPoints.join('\n')}\n\n${prompts.instruction.replace('{{prompt}}', prompt)}`;
+    const result = await model.generateContent(fullPrompt);
     return (await result.response).text();
   } catch (error) {
     console.error('Gemini AI error:', error);
@@ -107,31 +112,11 @@ function validateResponse(response) {
 }
 
 function getResponse(query) {
-  const faq = {
-    'apa itu e-meterai': 'E-meterai: cap elektronik untuk dokumen resmi.',
-    'bagaimana cara membeli': 'Beli E-meterai via situs kami atau layanan pelanggan.',
-    'harga': 'Harga E-meterai bervariasi. Hubungi kami untuk harga terbaru.',
-    'waktu pengiriman': 'Pengiriman E-meterai: 2-3 hari kerja.',
-    'kebijakan pengembalian': 'Jaminan uang kembali 30 hari jika tidak puas.'
-  };
-
-  return faq[query] || null;
+  return replies.faq[query] || null;
 }
 
 async function sendOptions(message) {
-  const options = `
-Pilih opsi:
-1. Info E-meterai
-2. Cara beli
-3. Harga
-4. Pengiriman
-5. Pengembalian
-6. Pembayaran
-
-Ketik nomor opsi.
-`;
-
-  await client.sendMessage(message.from, options);
+  await client.sendMessage(message.from, replies.options);
 }
 
 client.initialize();
