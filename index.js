@@ -4,7 +4,7 @@ require('dotenv').config();
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const JSON5 = require('json5');
+const yaml = require('js-yaml');
 const fs = require('fs');
 const prompts = require('./prompt.json');
 
@@ -18,8 +18,8 @@ const client = new Client({
 
 const userStates = {};
 
-// Read and parse the JSON5 file
-const replies = JSON5.parse(fs.readFileSync('./replies.json5', 'utf8'));
+// Read and parse the YAML file
+const replies = yaml.load(fs.readFileSync('./replies.yaml', 'utf8'));
 
 client.on('qr', qr => qrcode.generate(qr, { small: true }));
 client.on('ready', () => console.log('Client ready!'));
@@ -97,7 +97,7 @@ client.on('message', async message => {
 
 async function getGeminiResponse(prompt) {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-pro-exp-02-05"});
+    const model = genAI.getGenerativeModel({ model: "gemini-pro"});
     const fullPrompt = `${prompts.introduction}\n\nKey points:\n\n${prompts.keyPoints.join('\n')}\n\n${prompts.instruction.replace('{{prompt}}', prompt)}`;
     const result = await model.generateContent(fullPrompt);
     return (await result.response).text();
