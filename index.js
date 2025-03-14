@@ -4,8 +4,7 @@ require('dotenv').config();
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const yaml = require('js-yaml');
-const fs = require('fs');
+const replies = require('./replies.json');
 const prompts = require('./prompt.json');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -17,9 +16,6 @@ const client = new Client({
 });
 
 const userStates = {};
-
-// Read and parse the YAML file
-const replies = yaml.load(fs.readFileSync('./replies.yaml', 'utf8'));
 
 client.on('qr', qr => qrcode.generate(qr, { small: true }));
 client.on('ready', () => console.log('Client ready!'));
@@ -98,7 +94,7 @@ client.on('message', async message => {
 async function getGeminiResponse(prompt) {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-pro"});
-    const fullPrompt = `${prompts.introduction}\n\nKey points:\n\n${prompts.keyPoints.join('\n')}\n\n${prompts.instruction.replace('{{prompt}}', prompt)}`;
+    const fullPrompt = prompts.eMeteraiPrompt.replace('{{prompt}}', prompt);
     const result = await model.generateContent(fullPrompt);
     return (await result.response).text();
   } catch (error) {
