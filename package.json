@@ -27,6 +27,6 @@
     "qrcode-terminal": "*",
     "@google/generative-ai": "*",
     "dotenv": "*",
-    "json5" : "*"
+    "js-yaml" : "*"
   }
 }
