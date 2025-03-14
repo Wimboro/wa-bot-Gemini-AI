@@ -93,7 +93,7 @@ client.on('message', async message => {
 
 async function getGeminiResponse(prompt) {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-pro-exp-02-05"});
     const fullPrompt = prompts.eMeteraiPrompt.replace('{{prompt}}', prompt);
     const result = await model.generateContent(fullPrompt);
     return (await result.response).text();
