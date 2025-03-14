@@ -1,0 +1,43 @@
+{
+  greetingsCaption: `
+    MOHON DIBACA DAN DIPERHATIKAN
+
+    - Dokumen final, no revisions after e-Meterai
+    - PDF 100-500kb recommended
+    - Final docs processed, no complaints post e-Meterai
+    - e-Meterai left of signature, no overlap
+    - Processing 5-120 min, queue-dependent
+    - E-Meterai price: Rp. 17,000
+    - Work starts post-payment, QRIS accepted
+  `,
+  paymentCaption: 'Payment methods. Scan QR code to pay.',
+  options: `
+    Pilih opsi:
+    1. Info E-meterai
+    2. Cara beli
+    3. Harga
+    4. Pengiriman
+    5. Pengembalian
+    6. Pembayaran
+
+    Ketik nomor opsi.
+  `,
+  faq: {
+    'apa itu e-meterai': 'E-meterai: cap elektronik untuk dokumen resmi.',
+    'bagaimana cara membeli': 'Beli E-meterai via situs kami atau layanan pelanggan.',
+    'harga': 'Harga E-meterai bervariasi. Hubungi kami untuk harga terbaru.',
+    'waktu pengiriman': 'Pengiriman E-meterai: 2-3 hari kerja.',
+    'kebijakan pengembalian': 'Jaminan uang kembali 30 hari jika tidak puas.'
+  },
+  stopMessage: 'Bot stopped. Type "lanjut" to continue.',
+  continueMessage: 'Bot continued. How can I help?',
+  continuePrompt: 'Continue with bot? Type "stop" to stop or "lanjut" to continue.',
+  defaultMessage: 'Sorry, I don\'t understand. Try again or contact customer service.',
+  optionResponses: {
+    1: 'E-meterai: electronic stamp for official docs.',
+    2: 'Buy E-meterai via our site or customer service.',
+    3: 'E-meterai price varies. Contact us for latest.',
+    4: 'E-meterai delivery: 2-3 business days.',
+    5: '30-day money-back guarantee if unsatisfied.'
+  }
+}
