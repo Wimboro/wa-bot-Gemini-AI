@@ -1,13 +1,15 @@
-// index.js
-
 require('dotenv').config();
+const axios = require('axios');
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const replies = require('./replies.json');
-const prompts = require('./prompt.json');
+const replies = require('./replies');
+const emeteraiPromptTemplate = require('./prompt_template');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GREETING_IMAGE_URL = process.env.GREETING_IMAGE_URL;
+const PAYMENT_IMAGE_URL = process.env.PAYMENT_IMAGE_URL;
+
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 const client = new Client({
@@ -16,6 +18,37 @@ const client = new Client({
 });
 
 const userStates = {};
+
+// ✅ Function to get the current time using timeapi.io
+async function getCurrentTime() {
+  try {
+    const response = await axios.get('https://timeapi.io/api/Time/current/zone?timeZone=Asia/Jakarta');
+    const { date, time } = response.data;
+    return `${date} ${time}`; // Format: "YYYY-MM-DD HH:mm:ss"
+  } catch (error) {
+    console.error('Error fetching current time:', error);
+    return 'Unable to fetch time.';
+  }
+}
+
+// Generate AI response using Gemini with current time from API
+async function getGeminiResponse(userQuestion) {
+  try {
+    const currentTime = await getCurrentTime();
+
+    const fullPrompt = emeteraiPromptTemplate
+      .replace('{user_question}', userQuestion)
+      .replace('{current_time}', currentTime);
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const result = await model.generateContent(fullPrompt);
+    
+    return result.response.text();
+  } catch (error) {
+    console.error('Error generating AI response:', error);
+    return null;
+  }
+}
 
 client.on('qr', qr => qrcode.generate(qr, { small: true }));
 client.on('ready', () => console.log('Client ready!'));
@@ -30,89 +63,50 @@ client.on('message', async message => {
 
   if (text === 'stop') {
     userStates[userId].active = false;
-    await client.sendMessage(message.from, replies.stopMessage);
-    return;
+    return client.sendMessage(userId, replies.stopMessage);
   }
 
   if (text === 'lanjut') {
     userStates[userId].active = true;
-    await client.sendMessage(message.from, replies.continueMessage);
-    return;
+    return client.sendMessage(userId, replies.continueMessage);
   }
 
   if (!userStates[userId].active) return;
 
   if (['halo', 'selamat', 'assalamualaikum'].some(greet => text.includes(greet))) {
-    const imageUrl = 'https://example.com/e-meterai-product.jpg';
-    const media = await MessageMedia.fromUrl(imageUrl);
-    await client.sendMessage(message.from, media, { 
-      caption: replies.greetingsCaption
-    });
-  } else if (['pembayaran', 'bayar'].some(pay => text.includes(pay))) {
-    const paymentImageUrl = 'https://example.com/payment-qr-code.jpg';
-    const paymentMedia = await MessageMedia.fromUrl(paymentImageUrl);
-    await client.sendMessage(message.from, paymentMedia, { 
-      caption: replies.paymentCaption
-    });
-  } else if (!isNaN(text) && text >= 1 && text <= 6) {
-    const option = parseInt(text);
-    let response;
+    const media = await MessageMedia.fromUrl(GREETING_IMAGE_URL);
+    return client.sendMessage(userId, media, { caption: replies.greetingsCaption });
+  }
 
-    if (option === 6) {
-      const paymentImageUrl = 'https://example.com/payment-qr-code.jpg';
-      const paymentMedia = await MessageMedia.fromUrl(paymentImageUrl);
-      await client.sendMessage(message.from, paymentMedia, { 
-        caption: replies.paymentCaption
-      });
-      return;
+  if (['pembayaran', 'bayar'].some(pay => text.includes(pay))) {
+    const paymentMedia = await MessageMedia.fromUrl(PAYMENT_IMAGE_URL);
+    return client.sendMessage(userId, paymentMedia, { caption: replies.paymentCaption });
+  }
+
+  if (!isNaN(text) && text >= 1 && text <= 6) {
+    if (parseInt(text) === 6) {
+      const paymentMedia = await MessageMedia.fromUrl(PAYMENT_IMAGE_URL);
+      return client.sendMessage(userId, paymentMedia, { caption: replies.paymentCaption });
     } else {
-      response = replies.optionResponses[option];
+      return client.sendMessage(userId, replies.optionResponses[parseInt(text)]);
     }
+  }
 
-    await client.sendMessage(message.from, response);
-  } else if (text === 'bantuan') {
-    await sendOptions(message);
+  if (text === 'bantuan') {
+    return client.sendMessage(userId, replies.options);
+  }
+
+  const aiResponse = await getGeminiResponse(message.body);
+  if (aiResponse && aiResponse.length > 10) {
+    await client.sendMessage(userId, aiResponse);
   } else {
-    const response = await getGeminiResponse(message.body);
-    if (response && validateResponse(response)) {
-      await client.sendMessage(message.from, response);
-    } else {
-      const faqResponse = getResponse(text);
-      if (faqResponse) {
-        await client.sendMessage(message.from, faqResponse);
-      } else {
-        await client.sendMessage(message.from, replies.defaultMessage);
-      }
-    }
+    await client.sendMessage(userId, replies.defaultMessage);
   }
 
   if (userStates[userId].active) {
-    await client.sendMessage(message.from, replies.continuePrompt);
+    await client.sendMessage(userId, replies.continuePrompt);
   }
 });
 
-async function getGeminiResponse(prompt) {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-pro-exp-02-05"});
-    const fullPrompt = `${prompts.introduction}\n\nKey points:\n\n${prompts.keyPoints.join('\n')}\n\n${prompts.instruction.replace('{{prompt}}', prompt)}`;
-    const result = await model.generateContent(fullPrompt);
-    return (await result.response).text();
-  } catch (error) {
-    console.error('Gemini AI error:', error);
-    return null;
-  }
-}
-
-function validateResponse(response) {
-  return response.length > 10 && response.includes('E-meterai');
-}
-
-function getResponse(query) {
-  return replies.faq[query] || null;
-}
-
-async function sendOptions(message) {
-  await client.sendMessage(message.from, replies.options);
-}
-
 client.initialize();
+
