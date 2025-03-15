@@ -36,11 +36,63 @@ GREETING_IMAGE_URL=https://your-image-url.com/greeting.jpg
 PAYMENT_IMAGE_URL=https://your-image-url.com/payment.jpg
 ```
 
-### 4️⃣ **Run the Bot**  
+### 4️⃣ **Configure `replies.js`**  
+Edit `replies.js` to customize bot responses:  
+
+```javascript
+module.exports = {
+  greetingsCaption: "Your custom greeting caption here.",
+  paymentCaption: "Your custom payment caption here.",
+  options: "Pilih opsi:\n1. Info E-meterai\n2. Cara beli\n3. Harga\n4. Pengiriman\n5. Pengembalian\n6. Pembayaran\n\nKetik nomor opsi.",
+  faq: {
+    "apa itu e-meterai": "E-meterai adalah cap elektronik untuk dokumen resmi.",
+    "bagaimana cara membeli": "Beli E-meterai via situs kami atau layanan pelanggan.",
+    "harga": "Harga E-meterai bervariasi. Hubungi kami untuk harga terbaru.",
+    "waktu pengiriman": "Pengiriman E-meterai: 2-3 hari kerja.",
+    "kebijakan pengembalian": "Jaminan uang kembali 30 hari jika tidak puas."
+  },
+  stopMessage: "Bot berhenti. Ketik \"lanjut\" untuk melanjutkan.",
+  continueMessage: "Bot telah dilanjutkan. Bagaimana saya bisa membantu Anda?",
+  continuePrompt: "Anda terhubung dengan asisten otomatis. Ketik \"stop\" untuk berhenti atau abaikan untuk melanjutkan.",
+  defaultMessage: "Maaf, saya tidak mengerti pertanyaan Anda. Silakan coba lagi atau hubungi customer service kami.",
+  optionResponses: {
+    1: "E-meterai adalah cap elektronik untuk dokumen digital.",
+    2: "Anda bisa membeli E-meterai melalui situs kami atau customer service.",
+    3: "Harga E-meterai adalah Rp. 17,000.",
+    4: "Pengiriman E-meterai dilakukan dalam 2-3 hari kerja.",
+    5: "Kami memberikan jaminan pengembalian dalam 30 hari jika tidak puas."
+  }
+};
+```
+
+### 5️⃣ **Customize `prompt_template.js`**  
+Edit `prompt_template.js` to customize AI prompt behavior:  
+
+```javascript
+const emeteraiPromptTemplate = `
+You are a customer service representative for E-meterai, an electronic stamp solution for digital document authentication. Your goal is to provide accurate and helpful information about E-meterai to users.
+
+Key points:
+- E-meterai secures digital documents with cryptography.
+- Benefits: enhanced security, easy verification, and reduced fraud risk.
+- Compatible with PDF, Word, and image files.
+- API available for integration.
+
+Current Date & Time: {current_time}
+
+User question: {user_question}
+
+Your response:
+`;
+
+module.exports = emeteraiPromptTemplate;
+```
+
+### 6️⃣ **Run the Bot**  
 ```bash
 node index.js
 ```
-Scan the QR code displayed in the terminal to authenticate your WhatsApp.
+Scan the QR code displayed in the terminal to authenticate your WhatsApp.  
 
 ---
 
