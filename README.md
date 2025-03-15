@@ -10,8 +10,7 @@ This is a **WhatsApp chatbot** that integrates **Google Gemini AI**, **whatsapp-
 ✅ **WhatsApp Automation** – Built with **whatsapp-web.js**.  
 ✅ **Real-Time Time API** – Fetches **current time in Jakarta (GMT+7)** from **timeapi.io**.  
 ✅ **Automated Customer Support** – Handles FAQs, greetings, and payments.  
-✅ **Dynamic Image URLs** – Stores greeting and payment image URLs in **.env**.  
-✅ **QR Code Payment Support** – Sends payment QR codes to users.  
+✅ **Dynamic Image URLs** – Stores greeting and payment image URLs in **.env**.
 
 ---
 
