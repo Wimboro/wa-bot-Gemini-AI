@@ -20,7 +20,7 @@ This is a **WhatsApp chatbot** that integrates **Google Gemini AI**, **whatsapp-
 ### 1️⃣ **Clone the Repository**  
 ```bash
 git clone https://github.com/wimboro/wa-bot-Gemini-AI.git
-cd your-repo
+cd wa-bot-Gemini-AI
 ```
 
 ### 2️⃣ **Install Dependencies**  
