@@ -19,3 +19,4 @@ A WhatsApp bot for E-meterai customer service, built with Node.js and the `whats
    npm install
 3. Copy .env.example and rename .env
 4. Change GEMINI_API_KEY=your_api_key_here with your Gemini API
+5. change GREETING_IMAGE_URL and PAYMENT_IMAGE_URL with your image link
