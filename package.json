@@ -1,6 +1,6 @@
 {
   "name": "wa-bot-gemini-ai",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Bot WA AI",
   "keywords": [
     "WhatsApp",
@@ -26,6 +26,7 @@
     "whatsapp-web.js": "*",
     "qrcode-terminal": "*",
     "@google/generative-ai": "*",
-    "dotenv": "*"
+    "dotenv": "*",
+    "axios": "*"
   }
 }
