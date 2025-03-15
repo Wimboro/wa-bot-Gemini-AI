@@ -51,7 +51,7 @@ async function getGeminiResponse(userQuestion) {
 }
 
 client.on('qr', qr => qrcode.generate(qr, { small: true }));
-client.on('ready', () => console.log('Client ready!'));
+client.on('ready', () => console.log('✅ Client ready!'));
 
 client.on('message', async message => {
   if (!message.from.includes('@c.us')) return;
