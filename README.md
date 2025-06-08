@@ -1,3 +1,4 @@
+<!-- GitAds-Verify: FFHXRYEXPBKS23GSVYGJ2Y19Q3V9MFEJ -->
 ## 📲 WhatsApp Chatbot with Gemini AI & Time API  
 
 This is a **WhatsApp chatbot** that integrates **Google Gemini AI**, **whatsapp-web.js**, and **timeapi.io** to provide intelligent responses, handle customer inquiries, and display real-time Jakarta time.  
