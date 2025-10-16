@@ -2,11 +2,31 @@
 ## GitAds Sponsored
 [![Sponsored by GitAds](https://gitads.dev/v1/ad-serve?source=wimboro/wa-bot-gemini-ai@github)](https://gitads.dev/v1/ad-track?source=wimboro/wa-bot-gemini-ai@github)
 
-## 📲 WhatsApp Chatbot with Gemini AI & Time API  
+# 📲 WhatsApp Chatbot with Gemini AI & Time API  
 
 This is a **WhatsApp chatbot** that integrates **Google Gemini AI**, **whatsapp-web.js**, and **timeapi.io** to provide intelligent responses, handle customer inquiries, and display real-time Jakarta time.  
 
 ---
+
+## Support This Project
+
+<p>
+  <a href="https://saweria.co/HiddenCyber">
+    <img src="https://asset.hiddencyber.online/donate-buttons/saweria.svg" alt="Donasi via Saweria" height="56">
+  </a>
+
+  <a href="https://support.hiddencyber.online">
+    <img src="https://asset.hiddencyber.online/donate-buttons/qris.svg" alt="Dukungan via QRIS" height="56">
+  </a>
+
+  <a href="https://ko-fi.com/hiddencyber">
+    <img src="https://asset.hiddencyber.online/donate-buttons/ko-fi.svg" alt="Ko-fi untuk HiddenCyber" height="56">
+  </a>
+
+  <a href="https://paypal.me/wimboro">
+    <img src="https://asset.hiddencyber.online/donate-buttons/paypal.svg" alt="Donasi via PayPal" height="56">
+  </a>
+</p>
 
 ## 🚀 Features  
 
